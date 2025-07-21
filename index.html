@@ -12,6 +12,10 @@
     <div id="container">
         <form id="weather-form">
             <input type="text" id="city-input" placeholder="Enter city" required>
+            <select id="unit-select">
+                <option value="metric">Celsius</option>
+                <option value="imperial">Fahrenheit</option>
+            </select>
             <button type="submit">Get weather</button>
         </form>
         <div id="result" class="weather-box"></div>

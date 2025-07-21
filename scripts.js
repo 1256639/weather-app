@@ -2,20 +2,31 @@ const API_KEY = "759VFHQK5Y5LELB23N8MSP9T3";
 const form = document.getElementById("weather-form");
 const cityInput = document.getElementById("city-input");
 const resultBox = document.getElementById("result");
+const unitSelect = document.getElementById("unit-select");
 
 form.addEventListener("submit", async(e) => {
     e.preventDefault();
     showLoading();
     const city = cityInput.value.trim();
+    const unit = unitSelect.value;
     try {
         const data = await getWeather(city);
         if (data) {
-            displayWeather(data);
+            lastWeatherData = data;
+            displayWeather(data, unitSelect.value);
         } else {
+            lastWeatherData = null;
             showMessage("No data found.");
         }
     } catch {
+        lastWeatherData = null;
         showMessage("Error fetching weather.");
+    }
+});
+
+unitSelect.addEventListener("change", () => {
+    if (lastWeatherData) {
+        displayWeather(lastWeatherData, unitSelect.value);
     }
 });
 
@@ -29,7 +40,7 @@ function showMessage(msg) {
     resultBox.classList.add("active");
 }
 
-function displayWeather(data) {
+function displayWeather(data, unit) {
     // Clear
     resultBox.textContent = "";
 
@@ -54,7 +65,13 @@ function displayWeather(data) {
     // Temperature
     const tempEl = document.createElement("div");
     tempEl.className = "weather-temp";
-    tempEl.textContent = `${data.temp}°C`;
+    let temp = data.temp;
+    let tempSymbol = "°C";
+    if (unit === "imperial") {
+        temp = (temp * 9/5) + 32;
+        tempSymbol = "°F";
+    }
+    tempEl.textContent = Math.round(temp * 10) / 10 + tempSymbol;
 
     // Add
     resultBox.appendChild(cityEl);
