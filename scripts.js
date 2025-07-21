@@ -32,9 +32,19 @@ async function getWeather(city) {
         return null;
     }
 
+    const now = new Date();
+    const currentHour = now.getHours();
+
+    let hourObj = json.days[0].hours.find(h => {
+        const apiHour = new Date(h.datetime).getHours();
+        return apiHour === currentHour;
+    });
+
+    if (!hourObj) hourObj = json.days[0].hours[0];
+
     return {
         city: json.address,
-        temp: json.days[0].temp,
-        condition: json.days[0].conditions
+        temp: hourObj.temp,
+        condition: hourObj.conditions
     };
 }
